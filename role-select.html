@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Select Role - BVRITH Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial,sans-serif;
+  background:
+    linear-gradient(rgba(7,16,36,0.74), rgba(7,16,36,0.84)),
+    url("library.jpg") center/cover no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+}
+
+.panel{
+  width:min(1040px, calc(100% - 32px));
+  padding:40px 28px;
+  border-radius:28px;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(14px);
+  border:1px solid rgba(255,255,255,0.16);
+  box-shadow:0 24px 60px rgba(0,0,0,0.28);
+  text-align:center;
+}
+
+h1{
+  margin:0 0 10px;
+  font-size:clamp(32px, 5vw, 54px);
+}
+
+p{
+  margin:0 0 24px;
+  color:rgba(255,255,255,0.88);
+}
+
+.role-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:22px;
+}
+
+.role-card{
+  background:linear-gradient(180deg, rgba(255,255,255,0.95), rgba(242,247,255,0.94));
+  color:#12233c;
+  border-radius:24px;
+  padding:30px 24px;
+  text-align:left;
+  box-shadow:0 20px 40px rgba(0,0,0,0.18);
+}
+
+.role-card h2{
+  margin:0 0 10px;
+  font-size:28px;
+}
+
+.role-card ul{
+  margin:16px 0 24px;
+  padding-left:18px;
+  color:#32445f;
+  line-height:1.7;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  font-size:15px;
+}
+
+.faculty-btn{ background:linear-gradient(135deg, #0ea5e9, #2563eb); }
+.student-btn{ background:linear-gradient(135deg, #10b981, #059669); }
+.developer-btn{ background:linear-gradient(135deg, #8b5cf6, #6d28d9); }
+
+.disabled-note{
+  margin-top:12px;
+  color:#dc2626;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <h1>Select Access Role</h1>
+  <p id="welcomeText">Choose how you want to continue.</p>
+
+  <div class="role-grid">
+    <div class="role-card">
+      <h2>Student</h2>
+      <ul>
+        <li>View the library</li>
+        <li>Download resources</li>
+        <li>Request missing items</li>
+        <li>Track request status and notifications</li>
+      </ul>
+      <button class="student-btn" id="studentBtn" onclick="selectRole('student')">Continue as Student</button>
+      <div class="disabled-note" id="studentNote" style="display:none;">This account can only continue with its registered role.</div>
+    </div>
+
+    <div class="role-card">
+      <h2>Faculty</h2>
+      <ul>
+        <li>Upload library resources</li>
+        <li>Manage requests</li>
+        <li>Update daily AI news</li>
+        <li>Review student activity</li>
+      </ul>
+      <button class="faculty-btn" id="facultyBtn" onclick="selectRole('faculty')">Continue as Faculty</button>
+      <div class="disabled-note" id="facultyNote" style="display:none;">Signup as Faculty / Admin to use this role.</div>
+    </div>
+
+    <div class="role-card">
+      <h2>Developer</h2>
+      <ul>
+        <li>Resolve requests</li>
+        <li>Publish daily news</li>
+        <li>Support the platform</li>
+        <li>Manage the knowledge system</li>
+      </ul>
+      <button class="developer-btn" id="developerBtn" onclick="selectRole('developer')">Continue as Developer</button>
+      <div class="disabled-note" id="developerNote" style="display:none;">Signup as Developer to use this role.</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { isFacultyWhitelisted, isAllowedStudentEmail } from "./faculty-access.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBY7KexBKJcReNcTO7lUczpLVEe4LwFEUU",
+  authDomain: "bvrith-digital-library-88e59.firebaseapp.com",
+  projectId: "bvrith-digital-library-88e59",
+  storageBucket: "bvrith-digital-library-88e59.firebasestorage.app",
+  messagingSenderId: "326379487329",
+  appId: "1:326379487329:web:3fb389d1845ec7ec4bea20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const currentUser = localStorage.getItem("user");
+if(!currentUser){
+  window.location.href = "login.html";
+}
+
+function getUserDocId(email){
+  return encodeURIComponent(email);
+}
+
+function readLocalUsers(){
+  return JSON.parse(localStorage.getItem("users")) || {};
+}
+
+function saveUserToLocal(profile){
+  const users = readLocalUsers();
+  users[profile.email] = profile;
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+async function fetchRemoteUser(email){
+  const snap = await getDoc(doc(db, "users", getUserDocId(email)));
+  return snap.exists() ? snap.data() : null;
+}
+
+let profile = readLocalUsers()[currentUser];
+if(!profile){
+  try{
+    const remoteProfile = await fetchRemoteUser(currentUser);
+    if(remoteProfile){
+      profile = { ...remoteProfile, email: currentUser };
+      saveUserToLocal(profile);
+    }
+  }catch(error){
+    console.error(error);
+  }
+}
+
+const displayName = typeof profile === "object" && profile?.name ? profile.name : currentUser;
+const accountType = typeof profile === "object" ? profile?.accountType : "student";
+const designation = typeof profile === "object" ? profile?.designation : "";
+const department = typeof profile === "object" ? profile?.department : "";
+const normalizedAccountType = accountType === "faculty" || accountType === "developer" ? accountType : "student";
+let isStudentAccount = normalizedAccountType === "student";
+let isDeveloperAccount = accountType === "developer";
+const isApprovedFaculty = accountType === "faculty" && await isFacultyWhitelisted(currentUser);
+let isFacultyAccount = isApprovedFaculty;
+
+if(isStudentAccount && !isAllowedStudentEmail(currentUser)){
+  alert("Student access is allowed only for 23WH1A6601 to 23WH1A6664 and 24WH5A6601 to 24WH5A6607 official emails.");
+  localStorage.removeItem("user");
+  localStorage.removeItem("role");
+  window.location.href = "login.html";
+  throw new Error("Unauthorized student access blocked.");
+}
+
+function disableRoleButton(buttonId, noteId, message){
+  const button = document.getElementById(buttonId);
+  const note = document.getElementById(noteId);
+  button.disabled = true;
+  button.style.opacity = "0.55";
+  note.style.display = "block";
+  if(message){
+    note.innerText = message;
+  }
+}
+
+function renderRoleScreen(){
+  let welcome = "Welcome, " + displayName + ". Continue with your registered access role.";
+  if(accountType === "faculty" && designation){
+    welcome += " " + designation;
+  }
+  document.getElementById("welcomeText").innerText = welcome;
+
+  if(!isStudentAccount){
+    disableRoleButton("studentBtn", "studentNote");
+  }
+
+  if(!isFacultyAccount){
+    disableRoleButton(
+      "facultyBtn",
+      "facultyNote",
+      accountType === "faculty"
+        ? "This email is not in the approved faculty list."
+        : "This account is not registered as faculty/admin."
+    );
+  }
+
+  if(!isDeveloperAccount){
+    disableRoleButton("developerBtn", "developerNote", "This account is not registered as developer.");
+  }
+}
+
+window.selectRole = function selectRole(role){
+  if(role === "student" && !isStudentAccount){
+    alert("This account cannot continue as student.");
+    return;
+  }
+
+  if(role === "faculty" && !isFacultyAccount){
+    alert(
+      accountType === "faculty"
+        ? "This email is not in the approved faculty list."
+        : "This account is not registered as faculty/admin."
+    );
+    return;
+  }
+
+  if(role === "developer" && !isDeveloperAccount){
+    alert("This account is not registered as developer.");
+    return;
+  }
+
+  localStorage.setItem("role", role);
+  window.location.href = "index.html";
+};
+
+renderRoleScreen();
+</script>
+
+</body>
+</html>

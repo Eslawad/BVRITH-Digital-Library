@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Select Department</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f8f8f8;
+text-align:center;
+}
+
+.container{
+margin-top:120px;
+}
+
+button{
+padding:12px 25px;
+margin:10px;
+font-size:16px;
+background:#ff9800;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#e68900;
+}
+
+.back{
+background:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Select Department</h1>
+
+<button onclick="selectDept('CSE')">CSE</button>
+<button onclick="selectDept('CSE-AI&ML')">CSE-AI&ML</button>
+<button onclick="selectDept('IT')">IT</button>
+<button onclick="selectDept('ECE')">ECE</button>
+<button onclick="selectDept('EEE')">EEE</button>
+
+<br><br>
+
+<button class="back" onclick="goBack()">⬅ Back</button>
+
+</div>
+
+<script>
+
+function selectDept(dept){
+
+localStorage.setItem("department",dept)
+
+window.location.href="projects.html"
+
+}
+
+function goBack(){
+
+window.location.href="year.html"
+
+}
+
+</script>
+
+</body>
+</html>

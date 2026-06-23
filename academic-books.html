@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>BVRITH Academic Books</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  font-family:Arial,sans-serif;
+  background-image:url("background.jpg");
+  background-repeat:no-repeat;
+  background-size:cover;
+  background-position:center;
+  background-attachment:fixed;
+  text-align:center;
+  color:white;
+  min-height:100vh;
+  margin:0;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.62);
+  z-index:-1;
+}
+
+h1{
+  margin:40px 0 10px;
+  text-shadow:2px 2px 6px rgba(0,0,0,0.7);
+}
+
+.subtitle{
+  margin:0 auto 24px;
+  max-width:700px;
+  color:rgba(255,255,255,0.88);
+  line-height:1.6;
+}
+
+.toolbar{
+  width:min(1080px, calc(100% - 32px));
+  margin:0 auto 10px;
+  display:grid;
+  grid-template-columns:2fr 1fr;
+  gap:14px;
+}
+
+.toolbar input,
+.toolbar select{
+  width:100%;
+  padding:13px 14px;
+  border:none;
+  border-radius:10px;
+  font-size:15px;
+}
+
+.status{
+  margin:0 auto;
+  width:min(1080px, calc(100% - 32px));
+  color:rgba(255,255,255,0.88);
+  text-align:left;
+}
+
+.container{
+  width:min(1180px, calc(100% - 32px));
+  margin:24px auto 40px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:20px;
+}
+
+.card{
+  background:white;
+  color:black;
+  padding:22px;
+  border-radius:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.3);
+  transition:transform 0.3s ease;
+  text-align:left;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+}
+
+.card h3{
+  margin-top:0;
+  margin-bottom:12px;
+}
+
+.card p{
+  margin:8px 0;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:16px;
+}
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.view{
+  background:#4CAF50;
+  color:white;
+}
+
+.view:hover{
+  background:#45a049;
+}
+
+.download{
+  background:#2196F3;
+  color:white;
+}
+
+.download:hover{
+  background:#1976D2;
+}
+
+.back{
+  position:absolute;
+  left:20px;
+  top:20px;
+  background:white;
+  color:black;
+  padding:8px 12px;
+  border-radius:6px;
+}
+
+.back:hover{
+  background:#f0f0f0;
+}
+
+.empty{
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.16);
+  border-radius:14px;
+  padding:22px;
+}
+
+@media (max-width:700px){
+  .toolbar{
+    grid-template-columns:1fr;
+  }
+
+  .back{
+    position:static;
+    margin:20px auto 0;
+    display:inline-block;
+  }
+
+  h1{
+    margin-top:20px;
+  }
+}
+</style>
+</head>
+<body>
+
+<button class="back" onclick="goBack()">Back</button>
+
+<h1>BVRITH Academic Books</h1>
+<div class="toolbar">
+  <input type="text" id="searchInput" placeholder="Search by title or department">
+  <select id="departmentFilter">
+    <option value="">All Departments</option>
+  </select>
+</div>
+
+<p class="status" id="statusText">Loading academic books...</p>
+
+<div class="container">
+  <div class="grid" id="booksList"></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBY7KexBKJcReNcTO7lUczpLVEe4LwFEUU",
+  authDomain: "bvrith-digital-library-88e59.firebaseapp.com",
+  projectId: "bvrith-digital-library-88e59",
+  storageBucket: "bvrith-digital-library-88e59.firebasestorage.app",
+  messagingSenderId: "326379487329",
+  appId: "1:326379487329:web:3fb389d1845ec7ec4bea20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const booksList = document.getElementById("booksList");
+const statusText = document.getElementById("statusText");
+const searchInput = document.getElementById("searchInput");
+const departmentFilter = document.getElementById("departmentFilter");
+
+let allBooks = [];
+
+function escapeHtml(value){
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderDepartmentOptions(items){
+  const departments = [...new Set(items.map((item)=>item.department).filter(Boolean))].sort();
+  departmentFilter.innerHTML = '<option value="">All Departments</option>' +
+    departments.map((department)=>'<option value="' + escapeHtml(department) + '">' + escapeHtml(department) + '</option>').join("");
+}
+
+function renderBooks(){
+  const searchValue = searchInput.value.trim().toLowerCase();
+  const selectedDepartment = departmentFilter.value.trim().toLowerCase();
+
+  const filteredBooks = allBooks.filter((item)=>{
+    const titleMatch = (item.title || "").toLowerCase().includes(searchValue);
+    const departmentText = (item.department || "").toLowerCase();
+    const departmentMatch = !selectedDepartment || departmentText === selectedDepartment;
+    const searchMatch = !searchValue || titleMatch || departmentText.includes(searchValue);
+    return departmentMatch && searchMatch;
+  });
+
+  if(filteredBooks.length === 0){
+    booksList.innerHTML = '<div class="empty">No academic books found for the current search.</div>';
+    statusText.innerText = "0 books found.";
+    return;
+  }
+
+  statusText.innerText = filteredBooks.length + " academic book(s) found.";
+  booksList.innerHTML = filteredBooks.map((item)=>{
+    return `
+      <div class="card">
+        <h3>${escapeHtml(item.title)}</h3>
+        <p><b>Category:</b> ${escapeHtml(item.category || "Book")}</p>
+        <p><b>Department:</b> ${escapeHtml(item.department || "Not specified")}</p>
+        <div class="actions">
+          <a href="${escapeHtml(item.pdf_link)}" target="_blank" rel="noopener noreferrer">
+            <button class="view">View Online</button>
+          </a>
+          <a href="${escapeHtml(item.pdf_link)}" download>
+            <button class="download">Download</button>
+          </a>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+onSnapshot(collection(db, "Academic books"), (snapshot)=>{
+  allBooks = snapshot.docs.map((doc)=>({
+    id: doc.id,
+    title: doc.data().title || "Untitled",
+    category: doc.data().category || "Book",
+    department: doc.data().department || "",
+    pdf_link: doc.data().pdf_link || "#"
+  }));
+
+  renderDepartmentOptions(allBooks);
+  renderBooks();
+}, ()=>{
+  statusText.innerText = 'Could not load the "Academic books" collection.';
+  booksList.innerHTML = '<div class="empty">Check your Firebase collection name and Firestore rules.</div>';
+});
+
+searchInput.addEventListener("input", renderBooks);
+departmentFilter.addEventListener("change", renderBooks);
+</script>
+
+<script>
+function goBack(){
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>

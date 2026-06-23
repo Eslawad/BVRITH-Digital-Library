@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Signup - BVRITH Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:url("library.jpg") center/cover no-repeat;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.64);
+}
+
+.box{
+  position:relative;
+  z-index:1;
+  width:min(420px, calc(100% - 32px));
+  background:white;
+  padding:34px 28px;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.28);
+  text-align:center;
+}
+
+h2{
+  margin-top:0;
+  color:#132238;
+}
+
+input,select{
+  width:100%;
+  padding:12px 14px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #d3d9e2;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, #10b981, #059669);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+p{
+  color:#475569;
+}
+
+.hidden{
+  display:none;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="box">
+  <h2>Create Account</h2>
+  <input type="text" id="name" placeholder="Full Name">
+  <input type="email" id="email" placeholder="BVRITH Email">
+
+  <select id="accountType">
+    <option value="student">Student</option>
+    <option value="faculty">Faculty / Admin</option>
+    <option value="developer">Developer</option>
+  </select>
+
+  <div id="facultyFields" class="hidden">
+    <select id="designation">
+      <option value="">Select Designation</option>
+      <option value="HoD & Professor">HoD & Professor</option>
+      <option value="Professor">Professor</option>
+      <option value="Assistant Professor">Assistant Professor</option>
+    </select>
+  </div>
+
+  <div id="studentFields">
+    <input type="text" id="studentRollNumber" placeholder="Roll Number">
+    <input type="text" id="studentDepartment" placeholder="Department / Branch">
+  </div>
+
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="signup()">Signup</button>
+  <p>Already have account? <a href="login.html">Login</a></p>
+  <p><a href="home.html">Back to Home</a></p>
+</div>
+
+<script type="module">
+import { normalizeEmail, normalizeRollNumber, isOfficialBvrithEmail, isFacultyWhitelisted, isAllowedStudentRollNumber, isAllowedStudentEmail } from "./faculty-access.js";
+
+function readLocalUsers(){
+  return JSON.parse(localStorage.getItem("users")) || {};
+}
+
+function saveUserToLocal(profile){
+  const users = readLocalUsers();
+  users[profile.email] = profile;
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+function toggleFacultyFields(){
+  const type = document.getElementById("accountType").value;
+  document.getElementById("facultyFields").classList.toggle("hidden", type !== "faculty");
+  document.getElementById("studentFields").classList.toggle("hidden", type !== "student");
+}
+
+window.signup = async function signup(){
+  const name = document.getElementById("name").value.trim();
+  const accountType = document.getElementById("accountType").value;
+  const designation = document.getElementById("designation").value.trim();
+  const studentRollNumber = normalizeRollNumber(document.getElementById("studentRollNumber").value);
+  const studentDepartment = document.getElementById("studentDepartment").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const email = normalizeEmail(document.getElementById("email").value);
+
+  if(!name || !email || !password){
+    alert("Fill all required fields");
+    return;
+  }
+
+  if(accountType === "student" && !studentRollNumber){
+    alert("Please enter roll number.");
+    return;
+  }
+
+  if(accountType === "student" && !isAllowedStudentRollNumber(studentRollNumber)){
+    alert("Only students with roll numbers 23WH1A6601 to 23WH1A6664 and 24WH5A6601 to 24WH5A6607 can access.");
+    return;
+  }
+
+  if(accountType === "faculty"){
+    const isApprovedFaculty = await isFacultyWhitelisted(email);
+    if(!isApprovedFaculty){
+      alert("This email is not approved for faculty access.");
+      return;
+    }
+  }else if(!isOfficialBvrithEmail(email)){
+    alert("Only official BVRITH email addresses are allowed.");
+    return;
+  }
+
+  if(accountType === "student" && email.split("@")[0] !== studentRollNumber){
+    alert("Student email must match the roll number.");
+    return;
+  }
+
+  if(accountType === "student" && !isAllowedStudentEmail(email)){
+    alert("Student access is allowed only for 23WH1A6601 to 23WH1A6664 and 24WH5A6601 to 24WH5A6607 official emails.");
+    return;
+  }
+
+  const department = accountType === "student"
+    ? studentDepartment
+    : (accountType === "faculty" ? "CSE(AIML)" : "");
+  if(accountType === "student" && !department){
+    alert("Please enter department.");
+    return;
+  }
+
+  if(accountType === "faculty" && !designation){
+    alert("Please select faculty designation.");
+    return;
+  }
+
+  const users = readLocalUsers();
+  if(users[email]){
+    alert("Email already registered. Please login.");
+    window.location.href = "login.html";
+    return;
+  }
+
+  const profile = {
+    password,
+    name,
+    email,
+    accountType,
+    designation: accountType === "faculty" ? designation : "",
+    rollNumber: accountType === "student" ? studentRollNumber : "",
+    department,
+    createdAt:new Date().toISOString()
+  };
+
+  try{
+    saveUserToLocal(profile);
+    alert("Signup successful. Please login.");
+    window.location.href = "login.html";
+  }catch(error){
+    console.error(error);
+    alert("Signup failed. Please check your internet connection and try again.");
+  }
+};
+
+document.getElementById("accountType").addEventListener("change", toggleFacultyFields);
+toggleFacultyFields();
+</script>
+
+</body>
+</html>

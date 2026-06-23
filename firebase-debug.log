@@ -1,0 +1,132 @@
+[debug] [2026-04-07T08:42:39.068Z] ----------------------------------------------------------------------
+[debug] [2026-04-07T08:42:39.078Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules
+[debug] [2026-04-07T08:42:39.078Z] CLI Version:   15.11.0
+[debug] [2026-04-07T08:42:39.078Z] Platform:      win32
+[debug] [2026-04-07T08:42:39.079Z] Node Version:  v22.19.0
+[debug] [2026-04-07T08:42:39.079Z] Time:          Tue Apr 07 2026 14:12:39 GMT+0530 (India Standard Time)
+[debug] [2026-04-07T08:42:39.079Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-07T08:42:39.082Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2026-04-07T08:42:42.403Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-07T08:42:42.404Z] > authorizing via signed-in user (chaitanya100921@gmail.com)
+[debug] [2026-04-07T08:42:42.404Z] [iam] checking project bvrith-digital-library-88e59 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-04-07T08:42:42.405Z] Checked if tokens are valid: false, expires at: 1774638513300
+[debug] [2026-04-07T08:42:42.405Z] Checked if tokens are valid: false, expires at: 1774638513300
+[debug] [2026-04-07T08:42:42.405Z] > refreshing access token with scopes: []
+[debug] [2026-04-07T08:42:42.407Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-04-07T08:42:42.407Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-07T08:42:42.682Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-04-07T08:42:42.683Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-04-07T08:42:42.700Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions [none]
+[debug] [2026-04-07T08:42:42.700Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions  x-goog-user-project=bvrith-digital-library-88e59
+[debug] [2026-04-07T08:42:42.701Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-04-07T08:42:43.162Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-04-07T08:42:43.163Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2026-04-07T08:42:44.264Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions 200
+[debug] [2026-04-07T08:42:44.264Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'bvrith-digital-library-88e59'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-04-07T08:42:44.272Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:44.272Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:44.273Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bvrith-digital-library-88e59/services/firestore.googleapis.com [none]
+[debug] [2026-04-07T08:42:44.273Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bvrith-digital-library-88e59/services/firestore.googleapis.com  x-goog-user-project=bvrith-digital-library-88e59
+[debug] [2026-04-07T08:42:46.554Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bvrith-digital-library-88e59/services/firestore.googleapis.com 200
+[debug] [2026-04-07T08:42:46.555Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bvrith-digital-library-88e59/services/firestore.googleapis.com [omitted]
+[info] +  firestore: required API firestore.googleapis.com is enabled 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-04-07T08:42:46.565Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:46.565Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:46.565Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) [none]
+[debug] [2026-04-07T08:42:47.049Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) 200
+[debug] [2026-04-07T08:42:47.049Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) {"name":"projects/bvrith-digital-library-88e59/databases/(default)","uid":"6428e433-b52b-4dc0-b1e8-dcecaaa177eb","createTime":"2026-03-06T09:05:22.633303Z","updateTime":"2026-03-06T09:05:22.633303Z","locationId":"asia-south1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-04-07T07:42:43.923900Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"j","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IJ/6zqKs25MDMOfYrP31ipMD"}
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-04-07T08:42:47.051Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:47.051Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:42:47.051Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test [none]
+[debug] [2026-04-07T08:42:47.051Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test [omitted]
+[debug] [2026-04-07T08:42:48.947Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test 200
+[debug] [2026-04-07T08:42:48.947Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test {"issues":[{"sourcePosition":{"fileName":"firestore.rules","line":60,"column":11,"currentOffset":1210,"endOffset":1218},"description":"Missing 'match' keyword before path.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":60,"column":21,"currentOffset":1220,"endOffset":1223},"description":"Unexpected 'book'.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":60,"column":21,"currentOffset":1220,"endOffset":1223},"description":"mismatched input 'book' expecting {'{', '/', PATH_SEGMENT}","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":60,"column":25,"currentOffset":1224,"endOffset":1224},"description":"Missing 'match' keyword before path.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":61,"column":7,"currentOffset":1247,"endOffset":1251},"description":"missing '}' at 'allow'","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":64,"column":11,"currentOffset":1292,"endOffset":1300},"description":"Missing 'match' keyword before path.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":64,"column":21,"currentOffset":1302,"endOffset":1306},"description":"Unexpected 'books'.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":64,"column":21,"currentOffset":1302,"endOffset":1306},"description":"mismatched input 'books' expecting {'{', '/', PATH_SEGMENT}","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":64,"column":26,"currentOffset":1307,"endOffset":1307},"description":"Missing 'match' keyword before path.","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":65,"column":7,"currentOffset":1330,"endOffset":1334},"description":"mismatched input 'allow' expecting {'{', '/', PATH_SEGMENT}","severity":"ERROR"},{"sourcePosition":{"fileName":"firestore.rules","line":68,"column":5,"currentOffset":1369,"endOffset":1373},"description":"Unexpected 'match'.","severity":"ERROR"}]}
+[error] 
+[error] Error: Compilation errors in firestore.rules:
+[E] 60:11 - Missing 'match' keyword before path.
+[E] 60:21 - Unexpected 'book'.
+[E] 60:21 - mismatched input 'book' expecting {'{', '/', PATH_SEGMENT}
+[E] 60:25 - Missing 'match' keyword before path.
+[E] 61:7 - missing '}' at 'allow'
+[E] 64:11 - Missing 'match' keyword before path.
+[E] 64:21 - Unexpected 'books'.
+[E] 64:21 - mismatched input 'books' expecting {'{', '/', PATH_SEGMENT}
+[E] 64:26 - Missing 'match' keyword before path.
+[E] 65:7 - mismatched input 'allow' expecting {'{', '/', PATH_SEGMENT}
+[E] 68:5 - Unexpected 'match'.
+[debug] [2026-04-07T08:43:07.228Z] ----------------------------------------------------------------------
+[debug] [2026-04-07T08:43:07.231Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\ASUS\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore:rules
+[debug] [2026-04-07T08:43:07.231Z] CLI Version:   15.11.0
+[debug] [2026-04-07T08:43:07.231Z] Platform:      win32
+[debug] [2026-04-07T08:43:07.232Z] Node Version:  v22.19.0
+[debug] [2026-04-07T08:43:07.232Z] Time:          Tue Apr 07 2026 14:13:07 GMT+0530 (India Standard Time)
+[debug] [2026-04-07T08:43:07.232Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-04-07T08:43:08.941Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-04-07T08:43:08.942Z] > authorizing via signed-in user (chaitanya100921@gmail.com)
+[debug] [2026-04-07T08:43:08.942Z] [iam] checking project bvrith-digital-library-88e59 for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-04-07T08:43:08.944Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:08.945Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:08.946Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions [none]
+[debug] [2026-04-07T08:43:08.947Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions  x-goog-user-project=bvrith-digital-library-88e59
+[debug] [2026-04-07T08:43:08.947Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-04-07T08:43:10.426Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions 200
+[debug] [2026-04-07T08:43:10.426Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/bvrith-digital-library-88e59:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'bvrith-digital-library-88e59'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-04-07T08:43:10.430Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:10.430Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:10.430Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) [none]
+[debug] [2026-04-07T08:43:10.931Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) 200
+[debug] [2026-04-07T08:43:10.931Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/bvrith-digital-library-88e59/databases/(default) {"name":"projects/bvrith-digital-library-88e59/databases/(default)","uid":"6428e433-b52b-4dc0-b1e8-dcecaaa177eb","createTime":"2026-03-06T09:05:22.633303Z","updateTime":"2026-03-06T09:05:22.633303Z","locationId":"asia-south1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-04-07T07:43:07.776765Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"j","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IMXp/q2s25MDMOfYrP31ipMD"}
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-04-07T08:43:10.932Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:10.932Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:10.932Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test [none]
+[debug] [2026-04-07T08:43:10.932Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test [omitted]
+[debug] [2026-04-07T08:43:12.566Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test 200
+[debug] [2026-04-07T08:43:12.566Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-04-07T08:43:12.568Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:12.568Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:12.568Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases pageSize=10&pageToken=
+[debug] [2026-04-07T08:43:14.137Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases 200
+[debug] [2026-04-07T08:43:14.137Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases {"releases":[{"name":"projects/bvrith-digital-library-88e59/releases/cloud.firestore","rulesetName":"projects/bvrith-digital-library-88e59/rulesets/f8b37ef0-f3c9-4271-a9c1-7891d2879ff7","createTime":"2026-03-06T09:05:30.584395Z","updateTime":"2026-03-06T09:05:30.584395Z"}]}
+[debug] [2026-04-07T08:43:14.137Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:14.138Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:14.138Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets/f8b37ef0-f3c9-4271-a9c1-7891d2879ff7 [none]
+[debug] [2026-04-07T08:43:15.631Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets/f8b37ef0-f3c9-4271-a9c1-7891d2879ff7 200
+[debug] [2026-04-07T08:43:15.632Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets/f8b37ef0-f3c9-4271-a9c1-7891d2879ff7 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2026-04-07T08:43:15.633Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:15.633Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:15.633Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets [none]
+[debug] [2026-04-07T08:43:15.633Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets [omitted]
+[debug] [2026-04-07T08:43:17.109Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets 200
+[debug] [2026-04-07T08:43:17.110Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/rulesets {"name":"projects/bvrith-digital-library-88e59/rulesets/ce522a58-8726-409b-a277-5a02f73c37a4","source":{"files":[{"content":"rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}\n","name":"firestore.rules"}]},"createTime":"2026-04-07T08:43:13.858639Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2026-04-07T08:43:17.110Z] [rules] created ruleset projects/bvrith-digital-library-88e59/rulesets/ce522a58-8726-409b-a277-5a02f73c37a4
+[debug] [2026-04-07T08:43:17.111Z] [rules] releasing cloud.firestore/(default) with ruleset projects/bvrith-digital-library-88e59/rulesets/ce522a58-8726-409b-a277-5a02f73c37a4
+[debug] [2026-04-07T08:43:17.112Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:17.113Z] Checked if tokens are valid: true, expires at: 1775554961683
+[debug] [2026-04-07T08:43:17.113Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases/cloud.firestore/(default) [none]
+[debug] [2026-04-07T08:43:17.113Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases/cloud.firestore/(default) {"release":{"name":"projects/bvrith-digital-library-88e59/releases/cloud.firestore/(default)","rulesetName":"projects/bvrith-digital-library-88e59/rulesets/ce522a58-8726-409b-a277-5a02f73c37a4"}}
+[debug] [2026-04-07T08:43:18.752Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases/cloud.firestore/(default) 200
+[debug] [2026-04-07T08:43:18.752Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/bvrith-digital-library-88e59/releases/cloud.firestore/(default) {"name":"projects/bvrith-digital-library-88e59/releases/cloud.firestore","rulesetName":"projects/bvrith-digital-library-88e59/rulesets/ce522a58-8726-409b-a277-5a02f73c37a4","createTime":"2026-03-06T09:05:30.584395Z","updateTime":"2026-04-07T08:43:15.480622Z"}
+[debug] [2026-04-07T08:43:18.752Z] [rules] updated release projects/bvrith-digital-library-88e59/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/bvrith-digital-library-88e59/overview

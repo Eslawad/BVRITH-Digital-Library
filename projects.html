@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Projects</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f5f5f5;
+text-align:center;
+}
+
+.project{
+background:white;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+padding:20px;
+margin:20px auto;
+width:60%;
+}
+
+button{
+padding:8px 14px;
+margin:5px;
+border:none;
+background:#4CAF50;
+color:white;
+border-radius:5px;
+cursor:pointer;
+}
+
+button:hover{
+background:#3e8e41;
+}
+
+.back{
+background:red;
+}
+
+.search{
+padding:10px;
+width:300px;
+margin:20px;
+border-radius:6px;
+border:1px solid gray;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Projects</h1>
+
+<input type="text" id="search" class="search" placeholder="Search Project Title">
+
+<br>
+
+<button onclick="goBack()" class="back">⬅ Back</button>
+
+<div id="projects"></div>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyBY7KexBKJcReNcTO7lUczpLVEe4LwFEUU",
+authDomain: "bvrith-digital-library-88e59.firebaseapp.com",
+projectId: "bvrith-digital-library-88e59",
+storageBucket: "bvrith-digital-library-88e59.firebasestorage.app",
+messagingSenderId: "326379487329",
+appId: "1:326379487329:web:3fb389d1845ec7ec4bea20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const type = localStorage.getItem("projectType");
+const year = localStorage.getItem("year");
+const dept = localStorage.getItem("department");
+
+const querySnapshot = await getDocs(collection(db,"projects"));
+
+let html="";
+
+querySnapshot.forEach((doc)=>{
+
+let data = doc.data();
+
+if(data.project_type == type && data.Year == year && data.Department == dept){
+
+html += `
+<div class="project">
+
+<h3>${data.title}</h3>
+
+<p><b>Guide:</b> ${data.guide}</p>
+<p><b>Department:</b> ${data.Department}</p>
+<p><b>Year:</b> ${data.Year}</p>
+
+<a href="${data.pdf_link}" target="_blank">
+<button>View Online</button>
+</a>
+
+<a href="${data.pdf_link}" download>
+<button>Download PDF</button>
+</a>
+
+</div>
+`;
+
+}
+
+});
+
+document.getElementById("projects").innerHTML = html;
+
+document.getElementById("search").addEventListener("keyup",function(){
+
+let value=this.value.toLowerCase()
+
+let cards=document.getElementsByClassName("project")
+
+for(let i=0;i<cards.length;i++){
+
+let text=cards[i].innerText.toLowerCase()
+
+cards[i].style.display=text.includes(value)?"block":"none"
+
+}
+
+})
+
+window.goBack=function(){
+
+window.location.href="department.html"
+
+}
+
+</script>
+
+</body>
+</html>

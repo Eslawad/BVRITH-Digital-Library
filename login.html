@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Login - BVRITH Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:url("library.jpg") center/cover no-repeat;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.64);
+}
+
+.box{
+  position:relative;
+  z-index:1;
+  width:min(380px, calc(100% - 32px));
+  background:white;
+  padding:34px 28px;
+  border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,0.28);
+  text-align:center;
+}
+
+h2{
+  margin-top:0;
+  color:#132238;
+}
+
+input{
+  width:100%;
+  padding:12px 14px;
+  margin:10px 0;
+  border-radius:10px;
+  border:1px solid #d3d9e2;
+}
+
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(135deg, #2563eb, #1d4ed8);
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+a{
+  color:#2563eb;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+p{
+  color:#475569;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="box">
+  <h2>Login</h2>
+  <input type="email" id="email" placeholder="BVRITH Email">
+  <input type="password" id="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <p>Don't have account? <a href="signup.html">Signup</a></p>
+  <p><a href="home.html">Back to Home</a></p>
+</div>
+
+<script type="module">
+import { normalizeEmail, isOfficialBvrithEmail, isFacultyWhitelisted, isAllowedStudentEmail } from "./faculty-access.js";
+
+function readLocalUsers(){
+  return JSON.parse(localStorage.getItem("users")) || {};
+}
+
+function saveUserToLocal(profile){
+  const users = readLocalUsers();
+  users[profile.email] = profile;
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+window.login = async function login(){
+  const email = normalizeEmail(document.getElementById("email").value);
+  const password = document.getElementById("password").value.trim();
+
+  if(!email || !password){
+    alert("Fill all fields");
+    return;
+  }
+
+  const isApprovedFaculty = await isFacultyWhitelisted(email);
+  if(!isOfficialBvrithEmail(email) && !isApprovedFaculty){
+    alert("Login allowed only with official BVRITH email or approved faculty email.");
+    return;
+  }
+
+  const users = readLocalUsers();
+  const localUser = users[email];
+  const localProfile = typeof localUser === "string"
+    ? { email, password: localUser, name: email.split("@")[0], accountType: "student", designation: "", department: "" }
+    : localUser;
+
+  if(localProfile?.password){
+    if((localProfile.accountType || "student") === "student" && !isAllowedStudentEmail(email)){
+      alert("Student access is allowed only for 23WH1A6601 to 23WH1A6664 and 24WH5A6601 to 24WH5A6607 official emails.");
+      return;
+    }
+
+    if(localProfile.accountType === "faculty" && !isApprovedFaculty){
+      alert("This email is not approved for faculty access.");
+      return;
+    }
+
+    if(localProfile.password !== password){
+      alert("Incorrect password.");
+      return;
+    }
+
+    saveUserToLocal({ ...localProfile, email });
+    localStorage.setItem("user", email);
+    localStorage.removeItem("role");
+    window.location.href = "role-select.html";
+    return;
+  }
+
+  alert("Email not registered. Please signup first.");
+  window.location.href = "signup.html";
+};
+</script>
+
+</body>
+</html>

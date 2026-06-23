@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Home - BVRITH Digital Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --glass:rgba(255,255,255,0.1);
+  --glass-border:rgba(255,255,255,0.16);
+  --shadow:0 26px 60px rgba(0,0,0,0.28);
+  --ink:#132238;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Trebuchet MS",Arial,sans-serif;
+  color:white;
+  background:#081224;
+  overflow-x:hidden;
+}
+
+.hero-bg{
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  background:
+    linear-gradient(rgba(5,12,28,0.48), rgba(5,12,28,0.82)),
+    url("library.jpg") center/cover no-repeat;
+  transform:scale(1.06);
+}
+
+.hero-overlay{
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:
+    radial-gradient(circle at 14% 18%, rgba(255,204,102,0.22), transparent 22%),
+    radial-gradient(circle at 84% 16%, rgba(0,198,255,0.18), transparent 24%),
+    radial-gradient(circle at 50% 100%, rgba(16,185,129,0.14), transparent 28%);
+}
+
+.page{
+  width:min(1180px, calc(100% - 32px));
+  margin:0 auto;
+  padding:26px 0 56px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.brand{
+  font-size:19px;
+  font-weight:bold;
+  letter-spacing:0.6px;
+}
+
+.top-actions a,
+.hero-actions a{
+  display:inline-block;
+  text-decoration:none;
+  color:white;
+  padding:12px 18px;
+  border-radius:999px;
+  margin:6px;
+  font-weight:bold;
+}
+
+.login-btn{ background:linear-gradient(135deg, #0ea5e9, #2563eb); }
+.signup-btn{ background:linear-gradient(135deg, #10b981, #059669); }
+.explore-btn{ background:linear-gradient(135deg, #f59e0b, #d97706); }
+
+.hero{
+  min-height:calc(100vh - 120px);
+  display:grid;
+  grid-template-columns:1.05fr 0.95fr;
+  gap:26px;
+  align-items:center;
+}
+
+.hero-card,
+.info-card,
+.gallery-card,
+.news-card{
+  background:var(--glass);
+  border:1px solid var(--glass-border);
+  border-radius:32px;
+  padding:34px 28px;
+  backdrop-filter:blur(14px);
+  box-shadow:var(--shadow);
+}
+
+.news-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.news-card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at top right, rgba(14,165,233,0.18), transparent 24%),
+    radial-gradient(circle at bottom left, rgba(245,158,11,0.14), transparent 28%);
+  pointer-events:none;
+}
+
+.badge{
+  display:inline-block;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.18);
+  margin-bottom:16px;
+}
+
+h1{
+  margin:0 0 14px;
+  font-size:clamp(40px, 6vw, 72px);
+  line-height:1.03;
+}
+
+.hero p,
+.feature,
+.gallery-meta,
+.news-meta{
+  color:rgba(255,255,255,0.88);
+  line-height:1.7;
+  font-size:17px;
+}
+
+.hero-actions{
+  margin-top:22px;
+}
+
+.info-card h3,
+.gallery-card h2,
+.news-card h2{
+  margin-top:0;
+  font-size:30px;
+}
+
+.feature-list{
+  display:grid;
+  gap:14px;
+}
+
+.feature{
+  padding:14px 0;
+  border-top:1px solid rgba(255,255,255,0.14);
+}
+
+.feature:first-child{
+  border-top:none;
+  padding-top:0;
+}
+
+.feature strong{
+  display:block;
+  margin-bottom:6px;
+  color:white;
+}
+
+.bottom-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
+  margin-top:18px;
+}
+
+.gallery-frame{
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  min-height:360px;
+  box-shadow:0 24px 50px rgba(0,0,0,0.3);
+}
+
+.gallery-frame img{
+  width:100%;
+  height:380px;
+  object-fit:cover;
+  display:block;
+}
+
+.gallery-caption{
+  position:absolute;
+  left:18px;
+  right:18px;
+  bottom:18px;
+  padding:16px 18px;
+  border-radius:20px;
+  background:linear-gradient(180deg, rgba(4,12,27,0.16), rgba(4,12,27,0.8));
+  border:1px solid rgba(255,255,255,0.14);
+  text-align:left;
+}
+
+.gallery-caption strong{
+  display:block;
+  font-size:20px;
+  margin-bottom:4px;
+}
+
+.gallery-controls{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-top:16px;
+}
+
+.gallery-controls button{
+  border:none;
+  border-radius:999px;
+  padding:12px 16px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  background:linear-gradient(135deg, #1d4ed8, #2563eb);
+}
+
+.gallery-dots{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  flex-wrap:wrap;
+}
+
+.gallery-dots span{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.3);
+  display:inline-block;
+}
+
+.gallery-dots span.active{
+  background:#ffd166;
+}
+
+.gallery-note{
+  margin-top:14px;
+  color:rgba(255,255,255,0.76);
+}
+
+.news-stamp{
+  display:inline-block;
+  margin-bottom:16px;
+  padding:8px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.16);
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.news-status{
+  margin:0;
+  color:rgba(255,255,255,0.82);
+  max-width:52ch;
+}
+
+.news-header{
+  position:relative;
+  z-index:1;
+  margin-bottom:22px;
+}
+
+.news-title-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.news-title-row h2{
+  margin-bottom:0;
+}
+
+.news-live-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(7,16,30,0.55);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.9);
+  font-size:13px;
+}
+
+.news-live-dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#34d399;
+  box-shadow:0 0 0 6px rgba(52,211,153,0.12);
+}
+
+.news-list{
+  display:grid;
+  gap:18px;
+}
+
+.news-list.latest{
+  grid-template-columns:1fr;
+}
+
+.news-item{
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(180deg, rgba(9,20,38,0.92), rgba(16,35,60,0.88));
+  color:white;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:26px;
+  padding:18px;
+  box-shadow:0 22px 40px rgba(0,0,0,0.22);
+  transition:transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  display:grid;
+  grid-template-columns:minmax(220px, 280px) 1fr;
+  gap:18px;
+  align-items:start;
+}
+
+.news-item::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at top right, rgba(255,209,102,0.18), transparent 28%),
+    linear-gradient(180deg, rgba(255,255,255,0.05), transparent 34%);
+  pointer-events:none;
+}
+
+.news-item:hover{
+  transform:translateY(-4px);
+  box-shadow:0 28px 48px rgba(0,0,0,0.28);
+  border-color:rgba(143,211,255,0.28);
+}
+
+.news-item img{
+  width:100%;
+  height:100%;
+  min-height:200px;
+  object-fit:cover;
+  border-radius:18px;
+  margin-bottom:0;
+  display:block;
+}
+
+.news-item-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:12px;
+}
+
+.news-kicker{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.86);
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+}
+
+.news-item-body{
+  position:relative;
+  z-index:1;
+}
+
+.news-item h3{
+  margin:0;
+  font-size:clamp(21px, 2vw, 27px);
+  line-height:1.18;
+  max-width:15ch;
+}
+
+.news-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:14px 0 14px;
+  font-size:13px;
+}
+
+.news-meta span{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.86);
+}
+
+.news-summary{
+  margin:0;
+  color:rgba(240,247,255,0.88);
+  line-height:1.68;
+  font-size:16px;
+  display:-webkit-box;
+  -webkit-line-clamp:6;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
+}
+
+.news-item a{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-top:16px;
+  color:#8fd3ff;
+  font-weight:bold;
+  text-decoration:none;
+  padding:10px 14px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+.archive{
+  margin-top:18px;
+  text-align:left;
+  padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+
+.news-section{
+  position:relative;
+  z-index:1;
+  margin-top:22px;
+  text-align:left;
+}
+
+.news-section h3{
+  margin:0;
+}
+
+.section-label{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+
+.section-label span{
+  display:inline-flex;
+  align-items:center;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.8);
+  font-size:12px;
+}
+
+.news-item.horizontal h3{
+  max-width:none;
+}
+
+.news-item.horizontal .news-summary{
+  -webkit-line-clamp:4;
+}
+
+.archive h3{
+  margin-bottom:12px;
+}
+
+.archive .news-item{
+  padding:16px 18px;
+}
+
+.archive .news-item h3{
+  max-width:none;
+  font-size:20px;
+}
+
+.archive .news-summary{
+  -webkit-line-clamp:3;
+}
+
+@media (max-width:900px){
+  .hero,
+  .bottom-grid{
+    grid-template-columns:1fr;
+  }
+
+  .news-item{
+    padding:16px;
+  }
+
+  .news-item img{
+    height:170px;
+  }
+
+  .news-item h3{
+    max-width:none;
+  }
+
+  .news-item{
+    grid-template-columns:1fr;
+  }
+
+  .news-item img{
+    min-height:auto;
+    height:170px;
+    margin-bottom:14px;
+  }
+
+  .news-title-row{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="hero-bg"></div>
+<div class="hero-overlay"></div>
+
+<div class="page">
+  <div class="topbar">
+    <div class="brand">BVRITH Digital Library</div>
+    <div class="top-actions">
+      <a class="login-btn" href="login.html">Login</a>
+      <a class="signup-btn" href="signup.html">Signup</a>
+      <a class="explore-btn" href="login.html">Explore</a>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-card">
+      <div class="badge">Smart Campus Knowledge Hub</div>
+      <h1>Welcome To BVRITH Digital Library</h1>
+      <p>Access books, magazines, mini projects, major projects, and research papers in one digital platform built for your college community.</p>
+      <div class="hero-actions">
+        <a class="login-btn" href="login.html">Get Started</a>
+        <a class="explore-btn" href="login.html">Explore</a>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <h3>Campus Access</h3>
+      <div class="feature-list">
+        <div class="feature">
+          <strong>For Students</strong>
+          Browse resources, download files, and request missing content.
+        </div>
+        <div class="feature">
+          <strong>For Faculty</strong>
+          Upload resources and manage student requests.
+        </div>
+        <div class="feature">
+          <strong>For Developers</strong>
+          Keep the platform updated, manage AI news, and resolve requests.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="gallery-card">
+      <h2>Library Gallery</h2>
+      <p class="gallery-meta">Your college and library images can rotate here automatically.</p>
+      <div class="gallery-frame">
+        <img id="galleryImage" src="library.jpg" alt="Library gallery">
+        <div class="gallery-caption">
+          <strong id="galleryTitle">BVRITH Library</strong>
+          <span id="galleryText">Your uploaded library image is now the main home visual.</span>
+        </div>
+      </div>
+      <div class="gallery-controls">
+        <button onclick="moveGallery(-1)">Previous</button>
+        <div class="gallery-dots" id="galleryDots"></div>
+        <button onclick="moveGallery(1)">Next</button>
+      </div>
+      <p class="gallery-note">Bvrith Library</p>
+    </div>
+
+    <div class="news-card">
+      <div class="news-header">
+        <div class="news-stamp" id="newsStamp">Daily Updates</div>
+        <div class="news-title-row">
+          <h2>Daily AI News</h2>
+          <div class="news-live-pill"><span class="news-live-dot"></span>Live feed</div>
+        </div>
+        <p class="news-status" id="newsStatus">Loading updates...</p>
+      </div>
+      <div class="news-section">
+        <div class="section-label">
+          <h3>Automatic AI News</h3>
+          <span>Latest synced stories</span>
+        </div>
+        <div class="news-list latest" id="autoNewsList"></div>
+      </div>
+      <div class="news-section">
+        <div class="section-label">
+          <h3>Manual News Updates</h3>
+          <span>Published from admin panel</span>
+        </div>
+        <div class="news-list latest" id="manualNewsList"></div>
+      </div>
+      <div class="archive">
+        <div class="section-label">
+          <h3>News Archive</h3>
+          <span>Older updates</span>
+        </div>
+        <div class="news-list" id="newsArchive"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBY7KexBKJcReNcTO7lUczpLVEe4LwFEUU",
+  authDomain: "bvrith-digital-library-88e59.firebaseapp.com",
+  projectId: "bvrith-digital-library-88e59",
+  storageBucket: "bvrith-digital-library-88e59.firebasestorage.app",
+  messagingSenderId: "326379487329",
+  appId: "1:326379487329:web:3fb389d1845ec7ec4bea20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const autoSyncUrl = "https://asia-south1-" + firebaseConfig.projectId + ".cloudfunctions.net/syncDailyAiNewsNow";
+const autoSyncCacheKey = "daily-news-last-sync-request";
+let syncRequestInFlight = false;
+
+const galleryItems = [
+  {
+    image: "library.jpg",
+    title: "BVRITH Library Building",
+    text: "Front view of the BVRITH library building."
+  },
+  {
+    image: "library1.jpeg",
+    title: "Focused Study Session",
+    text: "Students reading and writing together inside the library."
+  },
+  {
+    image: "library2.jpeg",
+    title: "Reading Hall Activity",
+    text: "A wider view of students using the reading hall and book shelves."
+  }
+];
+
+const fallbackNews = [
+  {
+    title: "Daily AI News Will Appear Here",
+    source: "Management Panel",
+    date: "Today",
+    link: "login.html",
+    text: "Faculty or developer can add daily AI news from the management panel.",
+    sourceType: "manual"
+  }
+];
+
+let currentGalleryIndex = 0;
+
+function renderGallery(){
+  const item = galleryItems[currentGalleryIndex];
+  document.getElementById("galleryImage").src = item.image;
+  document.getElementById("galleryTitle").innerText = item.title;
+  document.getElementById("galleryText").innerText = item.text;
+  document.getElementById("galleryDots").innerHTML = galleryItems.map((_, index)=>{
+    return '<span class="' + (index === currentGalleryIndex ? 'active' : '') + '"></span>';
+  }).join("");
+}
+
+function moveGallery(step){
+  currentGalleryIndex = (currentGalleryIndex + step + galleryItems.length) % galleryItems.length;
+  renderGallery();
+}
+
+function renderNewsItems(targetId, items, emptyTitle, emptyText){
+  const target = document.getElementById(targetId);
+  const isHorizontal = targetId === "manualNewsList";
+  const cardClass = isHorizontal ? "news-item horizontal" : "news-item";
+  if(items.length === 0){
+    target.innerHTML = '<div class="' + cardClass + '"><div class="news-item-body"><div class="news-item-top"><span class="news-kicker">Waiting</span></div><h3>' + emptyTitle + '</h3><p class="news-summary">' + emptyText + '</p></div></div>';
+    return;
+  }
+
+  target.innerHTML = items.map((item)=>{
+    return '<div class="' + cardClass + '">' +
+      (item.image ? '<img src="' + item.image + '" alt="News image">' : '') +
+      '<div class="news-item-body">' +
+      '<div class="news-item-top"><span class="news-kicker">' + (item.sourceType === "automatic" ? "Auto Update" : "Manual Update") + '</span></div>' +
+      '<h3>' + item.title + '</h3>' +
+      '<div class="news-meta"><span>Source: ' + item.source + '</span><span>Date: ' + item.date + '</span></div>' +
+      '<p class="news-summary">' + item.text + '</p>' +
+      (item.link ? '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer">Read more</a>' : '') +
+      '</div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderNews(items, label, statusText){
+  const automaticItems = items.filter((item)=>item.sourceType === "automatic");
+  const manualItems = items.filter((item)=>item.sourceType !== "automatic");
+  const archiveList = document.getElementById("newsArchive");
+  document.getElementById("newsStamp").innerText = label;
+  document.getElementById("newsStatus").innerText = statusText;
+
+  renderNewsItems(
+    "autoNewsList",
+    automaticItems.slice(0, 3),
+    "No automatic AI news yet",
+    "Automatic AI news will appear here after the daily sync runs."
+  );
+
+  renderNewsItems(
+    "manualNewsList",
+    manualItems.slice(0, 3),
+    "No manual updates yet",
+    "Faculty or developer can publish manual AI updates from the management panel."
+  );
+
+  const archiveItems = [...automaticItems.slice(3), ...manualItems.slice(3)];
+  archiveList.innerHTML = archiveItems.length === 0
+    ? '<div class="news-item"><div class="news-item-body"><div class="news-item-top"><span class="news-kicker">Archive</span></div><h3>No older news yet</h3><p class="news-summary">Older AI updates will appear here automatically.</p></div></div>'
+    : archiveItems.map((item)=>{
+      return '<div class="news-item">' +
+        '<div class="news-item-body">' +
+        '<div class="news-item-top"><span class="news-kicker">' + (item.sourceType === "automatic" ? "Auto Archive" : "Manual Archive") + '</span></div>' +
+        '<h3>' + item.title + '</h3>' +
+        '<div class="news-meta"><span>Source: ' + item.source + '</span><span>Date: ' + item.date + '</span></div>' +
+        '<p class="news-summary">' + item.text + '</p>' +
+        (item.link ? '<a href="' + item.link + '" target="_blank" rel="noopener noreferrer">Read more</a>' : '') +
+        '</div>' +
+        '</div>';
+    }).join("");
+}
+
+function toDateValue(value){
+  if(!value){
+    return null;
+  }
+
+  if(value instanceof Date){
+    return value;
+  }
+
+  if(typeof value?.toDate === "function"){
+    return value.toDate();
+  }
+
+  if(typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)){
+    return new Date(value + "T00:00:00");
+  }
+
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function toMillis(value){
+  const date = toDateValue(value);
+  return date ? date.getTime() : 0;
+}
+
+function formatDate(value){
+  const date = toDateValue(value) || new Date();
+  return date.toLocaleDateString("en-US", {
+    year:"numeric",
+    month:"long",
+    day:"numeric"
+  });
+}
+
+function isSameDate(a, b){
+  return a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+}
+
+function shouldRequestFreshAutoNews(items){
+  const automaticItems = items.filter((item)=>item.sourceType === "automatic");
+  if(automaticItems.length === 0){
+    return true;
+  }
+
+  const latestAutomaticItem = automaticItems[0];
+  const latestDate = toDateValue(latestAutomaticItem.createdAt || latestAutomaticItem.date);
+  if(!latestDate){
+    return true;
+  }
+
+  return !isSameDate(latestDate, new Date());
+}
+
+async function triggerAutoNewsSync(reason){
+  if(syncRequestInFlight){
+    return;
+  }
+
+  const todayKey = new Date().toISOString().slice(0, 10);
+  if(localStorage.getItem(autoSyncCacheKey) === todayKey){
+    return;
+  }
+
+  syncRequestInFlight = true;
+  document.getElementById("newsStatus").innerText = reason || "Checking for the latest automatic AI news...";
+
+  try{
+    const response = await fetch(autoSyncUrl, { method: "GET" });
+    if(!response.ok){
+      throw new Error("Sync request failed with status " + response.status);
+    }
+
+    localStorage.setItem(autoSyncCacheKey, todayKey);
+    document.getElementById("newsStatus").innerText = "Latest automatic AI news sync completed.";
+  }catch(error){
+    console.error("Automatic news sync failed:", error);
+    document.getElementById("newsStatus").innerText = "Showing the latest saved news. Automatic refresh is not available right now.";
+  }finally{
+    syncRequestInFlight = false;
+  }
+}
+
+renderGallery();
+setInterval(()=>moveGallery(1), 4000);
+
+onSnapshot(collection(db, "daily_news"), (snapshot)=>{
+  const items = snapshot.docs.map((doc)=>({
+      id:doc.id,
+      ...doc.data()
+    }))
+    .sort((a, b)=>String(b.date || "").localeCompare(String(a.date || "")) || toMillis(b.createdAt) - toMillis(a.createdAt))
+    .map((item)=>({
+      title:item.title || "AI Update",
+      source:item.source || "BVRITH Team",
+      date:item.date || formatDate(item.createdAt),
+      link:item.link || "login.html",
+      text:item.summary || "New update available.",
+      image:item.image || "",
+      sourceType:item.sourceType || "manual",
+      createdAt:item.createdAt
+    }));
+
+  if(items.length === 0){
+    renderNews(fallbackNews, "Daily Updates", "No live news added yet. Faculty or developer can publish updates.");
+    triggerAutoNewsSync("No automatic AI news found yet. Fetching the latest headlines...");
+    return;
+  }
+
+  const automaticItems = items.filter((item)=>item.sourceType === "automatic");
+  const latestAutomaticItem = automaticItems[0];
+  const updatedLabel = latestAutomaticItem
+    ? "Updated: " + formatDate(latestAutomaticItem.createdAt || latestAutomaticItem.date)
+    : "Daily Updates";
+  const statusText = latestAutomaticItem
+    ? "Automatic AI headlines are updating from the live feed."
+    : "Manual updates are available. Fetching the latest automatic AI news...";
+
+  renderNews(items, updatedLabel, statusText);
+
+  if(shouldRequestFreshAutoNews(items)){
+    triggerAutoNewsSync("Refreshing automatic AI news from the live feed...");
+  }
+});
+
+window.moveGallery = moveGallery;
+</script>
+
+</body>
+</html>

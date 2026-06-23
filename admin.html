@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Management Panel - BVRITH Library</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:linear-gradient(135deg, #0f172a, #1e293b);
+  color:white;
+}
+
+.page{
+  width:min(1180px, calc(100% - 32px));
+  margin:0 auto;
+  padding:34px 0 50px;
+}
+
+.panel{
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:24px;
+  padding:26px;
+  backdrop-filter:blur(12px);
+  box-shadow:0 20px 40px rgba(0,0,0,0.25);
+  margin-bottom:22px;
+}
+
+.top-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+  gap:14px;
+}
+
+.request-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px 14px;
+  border:none;
+  border-radius:12px;
+  margin-top:10px;
+  font-size:15px;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+button{
+  padding:12px 18px;
+  border:none;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  color:white;
+  margin:6px 6px 0 0;
+}
+
+.primary{ background:linear-gradient(135deg, #8b5cf6, #6d28d9); }
+.secondary{ background:linear-gradient(135deg, #0ea5e9, #2563eb); }
+.success{ background:linear-gradient(135deg, #10b981, #059669); }
+.warning{ background:linear-gradient(135deg, #f59e0b, #d97706); }
+.danger{ background:linear-gradient(135deg, #ef4444, #dc2626); }
+
+.card{
+  background:rgba(255,255,255,0.94);
+  color:#14253e;
+  border-radius:18px;
+  padding:18px;
+  margin-top:14px;
+  animation:fadeUp 0.35s ease;
+}
+
+.empty{
+  color:rgba(255,255,255,0.8);
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.tag{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.14);
+  border:1px solid rgba(255,255,255,0.14);
+  margin-right:8px;
+}
+
+.status-note{
+  margin-top:14px;
+  padding:12px 14px;
+  border-radius:14px;
+  font-weight:bold;
+}
+
+.status-note.info{
+  background:rgba(255,255,255,0.12);
+}
+
+.status-note.success{
+  background:rgba(16,185,129,0.18);
+}
+
+.status-note.error{
+  background:rgba(239,68,68,0.22);
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@media (max-width:900px){
+  .request-grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="panel">
+    <div class="top-row">
+      <div>
+        <h1>Library Management Panel</h1>
+        <p id="roleText">Shared management access for faculty and developer.</p>
+      </div>
+      <div>
+        <button class="secondary" onclick="goLibrary()">Back to Library</button>
+        <button class="danger" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Upload Library Resource</h2>
+    <div class="grid">
+      <input type="text" id="uploadTitle" placeholder="Title">
+      <select id="uploadCategory">
+        <option value="Book">Book</option>
+        <option value="Magazine">Magazine</option>
+        <option value="Mini Project">Mini Project</option>
+        <option value="Major Project">Major Project</option>
+        <option value="Research Paper">Research Paper</option>
+      </select>
+      <input type="text" id="uploadYear" placeholder="Year">
+      <input type="text" id="uploadDepartment" placeholder="Department">
+      <input type="text" id="uploadGuide" placeholder="Guide / Author">
+      <input type="text" id="uploadMonth" placeholder="Month / Volume / Issue">
+      <input type="text" id="uploadUrl" placeholder="PDF URL">
+    </div>
+    <div id="uploadStatus" class="status-note info" style="display:none;"></div>
+    <button class="primary" id="uploadActionBtn" onclick="saveUpload()">Save Resource</button>
+  </div>
+
+  <div class="panel">
+    <h2>Daily AI News Editor</h2>
+    <div class="grid">
+      <input type="text" id="newsTitle" placeholder="News title">
+      <input type="text" id="newsSource" placeholder="Source">
+      <input type="date" id="newsDate">
+      <input type="text" id="newsLink" placeholder="Article link">
+      <input type="text" id="newsImage" placeholder="Image URL">
+    </div>
+    <textarea id="newsSummary" placeholder="Summary"></textarea>
+    <div id="newsStatus" class="status-note info" style="display:none;"></div>
+    <button class="secondary" id="newsActionBtn" onclick="publishNews()">Publish News</button>
+    <div id="newsAdminList" class="empty">No published news yet.</div>
+  </div>
+
+  <div class="panel" id="codingPanel">
+    <h2>Daily Coding Question Editor</h2>
+    <div class="grid">
+      <input type="text" id="codingTitle" placeholder="Question title">
+      <input type="text" id="codingCompany" placeholder="Company tag">
+      <input type="text" id="codingDifficulty" placeholder="Difficulty">
+      <input type="date" id="codingDate">
+    </div>
+    <textarea id="codingProblem" placeholder="Problem statement"></textarea>
+    <div id="codingStatus" class="status-note info" style="display:none;"></div>
+    <button class="warning" id="codingActionBtn" onclick="publishCodingQuestion()">Publish Daily Question</button>
+    <div id="codingAdminList" class="empty">No daily coding questions yet.</div>
+  </div>
+
+  <div class="panel">
+    <div class="top-row">
+      <h2>Requests Dashboard</h2>
+      <div>
+        <span class="tag">Pending / In Progress</span>
+        <span class="tag">Resolved</span>
+      </div>
+    </div>
+    <div class="request-grid">
+      <div>
+        <h3>Active Requests</h3>
+        <div id="activeRequests" class="empty">No active requests.</div>
+      </div>
+      <div>
+        <h3>Resolved Requests</h3>
+        <div id="resolvedRequests" class="empty">No resolved requests.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  onSnapshot,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { isFacultyWhitelisted } from "./faculty-access.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBY7KexBKJcReNcTO7lUczpLVEe4LwFEUU",
+  authDomain: "bvrith-digital-library-88e59.firebaseapp.com",
+  projectId: "bvrith-digital-library-88e59",
+  storageBucket: "bvrith-digital-library-88e59.firebasestorage.app",
+  messagingSenderId: "326379487329",
+  appId: "1:326379487329:web:3fb389d1845ec7ec4bea20"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const currentUser = localStorage.getItem("user");
+const role = localStorage.getItem("role");
+const allowedRoles = ["faculty", "developer"];
+let requestCache = [];
+let newsCache = [];
+let codingCache = [];
+let editingNewsId = "";
+let editingCodingId = "";
+function getUserDocId(email){
+  return encodeURIComponent(email);
+}
+
+function readLocalUsers(){
+  return JSON.parse(localStorage.getItem("users")) || {};
+}
+
+function saveUserToLocal(profile){
+  const users = readLocalUsers();
+  users[profile.email] = profile;
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+async function fetchRemoteUser(email){
+  const snap = await getDoc(doc(db, "users", getUserDocId(email)));
+  return snap.exists() ? snap.data() : null;
+}
+
+async function isRoleAllowedForAccount(selectedRole, accountType, email){
+  if(selectedRole === "faculty"){
+    return accountType === "faculty" && await isFacultyWhitelisted(email);
+  }
+
+  if(selectedRole === "developer"){
+    return accountType === "developer";
+  }
+
+  return accountType !== "faculty" && accountType !== "developer";
+}
+
+let profile = readLocalUsers()[currentUser];
+
+if(!currentUser){
+  window.location.href = "login.html";
+}
+
+if(!allowedRoles.includes(role)){
+  alert("Only faculty or developer can access this panel.");
+  window.location.href = "index.html";
+}
+
+if(!profile){
+  try{
+    const remoteProfile = await fetchRemoteUser(currentUser);
+    if(remoteProfile){
+      profile = { ...remoteProfile, email: currentUser };
+      saveUserToLocal(profile);
+    }
+  }catch(error){
+    console.error("Unable to load remote profile.", error);
+  }
+}
+
+const accountType = typeof profile === "object" ? profile?.accountType : "student";
+if(!(await isRoleAllowedForAccount(role, accountType, currentUser))){
+  localStorage.removeItem("role");
+  alert("This account cannot access the selected role.");
+  window.location.href = "role-select.html";
+}
+
+const extraInfo = typeof profile === "object"
+  ? [profile.designation].filter(Boolean).join(" | ")
+  : "";
+document.getElementById("roleText").innerText = "Logged in as " + role + ": " + currentUser + (extraInfo ? " | " + extraInfo : "");
+document.getElementById("codingPanel").style.display = role === "developer" ? "none" : "block";
+
+function goLibrary(){
+  window.location.href = "index.html";
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  localStorage.removeItem("role");
+  window.location.href = "login.html";
+}
+
+function setStatusNote(targetId, message, tone){
+  const node = document.getElementById(targetId);
+  if(!message){
+    node.style.display = "none";
+    node.innerText = "";
+    node.className = "status-note info";
+    return;
+  }
+  node.style.display = "block";
+  node.innerText = message;
+  node.className = "status-note " + (tone || "info");
+}
+
+function parseDisplayDate(value){
+  if(!value){
+    return "";
+  }
+  if(value?.toDate){
+    return value.toDate().toLocaleString();
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString();
+}
+
+function toMillis(value){
+  if(!value){
+    return 0;
+  }
+  if(value?.toMillis){
+    return value.toMillis();
+  }
+  if(value?.toDate){
+    return value.toDate().getTime();
+  }
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+}
+
+function resetUploadForm(){
+  document.getElementById("uploadTitle").value = "";
+  document.getElementById("uploadYear").value = "";
+  document.getElementById("uploadDepartment").value = "";
+  document.getElementById("uploadGuide").value = "";
+  document.getElementById("uploadMonth").value = "";
+  document.getElementById("uploadUrl").value = "";
+}
+
+function resetNewsForm(){
+  editingNewsId = "";
+  document.getElementById("newsTitle").value = "";
+  document.getElementById("newsSource").value = "";
+  document.getElementById("newsDate").value = "";
+  document.getElementById("newsLink").value = "";
+  document.getElementById("newsImage").value = "";
+  document.getElementById("newsSummary").value = "";
+  document.getElementById("newsActionBtn").innerText = "Publish News";
+}
+
+function resetCodingForm(){
+  editingCodingId = "";
+  document.getElementById("codingTitle").value = "";
+  document.getElementById("codingCompany").value = "";
+  document.getElementById("codingDifficulty").value = "";
+  document.getElementById("codingDate").value = "";
+  document.getElementById("codingProblem").value = "";
+  document.getElementById("codingActionBtn").innerText = "Publish Daily Question";
+}
+
+async function saveUpload(){
+  const payload = {
+    title: document.getElementById("uploadTitle").value.trim(),
+    category: document.getElementById("uploadCategory").value,
+    year: document.getElementById("uploadYear").value.trim(),
+    department: document.getElementById("uploadDepartment").value.trim(),
+    guide: document.getElementById("uploadGuide").value.trim(),
+    extra: document.getElementById("uploadMonth").value.trim(),
+    url: document.getElementById("uploadUrl").value.trim(),
+    uploadedBy: currentUser,
+    createdAt: serverTimestamp()
+  };
+
+  if(!payload.title || !payload.url){
+    setStatusNote("uploadStatus", "Title and PDF URL are required.", "error");
+    return;
+  }
+
+  setStatusNote("uploadStatus", "Saving resource...", "info");
+
+  await addDoc(collection(db, "library_content"), payload);
+  resetUploadForm();
+  setStatusNote("uploadStatus", "Resource uploaded successfully.", "success");
+}
+
+async function publishNews(){
+  const formData = {
+    title: document.getElementById("newsTitle").value.trim(),
+    source: document.getElementById("newsSource").value.trim(),
+    date: document.getElementById("newsDate").value.trim(),
+    link: document.getElementById("newsLink").value.trim(),
+    image: document.getElementById("newsImage").value.trim(),
+    summary: document.getElementById("newsSummary").value.trim()
+  };
+
+  if(!formData.title || !formData.source || !formData.summary){
+    setStatusNote("newsStatus", "Title, source, and summary are required.", "error");
+    return;
+  }
+
+  setStatusNote("newsStatus", editingNewsId ? "Updating news item..." : "Publishing news item...", "info");
+
+  if(editingNewsId){
+    await updateDoc(doc(db, "daily_news", editingNewsId), {
+      ...formData,
+      sourceType: "manual",
+      updatedAt: serverTimestamp(),
+      updatedBy: currentUser
+    });
+    resetNewsForm();
+    setStatusNote("newsStatus", "Daily AI news updated.", "success");
+    return;
+  }
+
+  await addDoc(collection(db, "daily_news"), {
+    ...formData,
+    sourceType: "manual",
+    createdAt: serverTimestamp(),
+    createdBy: currentUser
+  });
+  resetNewsForm();
+  setStatusNote("newsStatus", "Daily AI news published.", "success");
+}
+
+async function publishCodingQuestion(){
+  const formData = {
+    title: document.getElementById("codingTitle").value.trim(),
+    company: document.getElementById("codingCompany").value.trim(),
+    difficulty: document.getElementById("codingDifficulty").value.trim(),
+    date: document.getElementById("codingDate").value.trim(),
+    problem: document.getElementById("codingProblem").value.trim()
+  };
+
+  if(!formData.title || !formData.company || !formData.difficulty || !formData.date || !formData.problem){
+    setStatusNote("codingStatus", "Fill all daily coding question fields.", "error");
+    return;
+  }
+
+  setStatusNote("codingStatus", editingCodingId ? "Updating coding question..." : "Publishing coding question...", "info");
+
+  if(editingCodingId){
+    await updateDoc(doc(db, "daily_coding_questions", editingCodingId), {
+      ...formData,
+      updatedAt: serverTimestamp(),
+      updatedBy: currentUser
+    });
+    resetCodingForm();
+    setStatusNote("codingStatus", "Daily coding question updated.", "success");
+    return;
+  }
+
+  await addDoc(collection(db, "daily_coding_questions"), {
+    ...formData,
+    createdAt: serverTimestamp(),
+    createdBy: currentUser
+  });
+  resetCodingForm();
+  setStatusNote("codingStatus", "Daily coding question published.", "success");
+}
+
+async function updateRequestStatus(id, status){
+  await updateDoc(doc(db, "requests", id), {
+    status,
+    updatedAt: serverTimestamp(),
+    updatedBy: currentUser + " (" + role + ")"
+  });
+}
+
+async function notifyAndResolve(request, status){
+  await updateRequestStatus(request.id, status);
+  await addDoc(collection(db, "notifications"), {
+    user: request.user,
+    title: status === "added" ? "Requested item added" : "Request updated",
+    message: status === "added"
+      ? 'Your requested item "' + request.title + '" has been added to the library.'
+      : 'Your request "' + request.title + '" has been updated to ' + status + '.',
+    updatedBy: currentUser + " (" + role + ")",
+    createdAt: serverTimestamp()
+  });
+}
+
+function renderNewsAdmin(items){
+  const list = document.getElementById("newsAdminList");
+  if(items.length === 0){
+    list.className = "empty";
+    list.innerHTML = "No published news yet.";
+    return;
+  }
+
+  list.className = "";
+  list.innerHTML = items.map((item)=>{
+    return '<div class="card">' +
+      '<h3>' + item.title + '</h3>' +
+      '<p><b>Source:</b> ' + item.source + '</p>' +
+      '<p><b>Date:</b> ' + (item.date || "-") + '</p>' +
+      '<p><b>Created:</b> ' + parseDisplayDate(item.createdAt) + '</p>' +
+      (item.image ? '<p><b>Image:</b> Added</p>' : '') +
+      '<div class="actions"><button class="secondary" onclick="editNews(\'' + item.id + '\')">Edit</button><button class="danger" onclick="removeNews(\'' + item.id + '\')">Delete</button></div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderCodingAdmin(items){
+  const list = document.getElementById("codingAdminList");
+  if(items.length === 0){
+    list.className = "empty";
+    list.innerHTML = "No daily coding questions yet.";
+    return;
+  }
+
+  list.className = "";
+  list.innerHTML = items.map((item)=>{
+    return '<div class="card">' +
+      '<h3>' + item.title + '</h3>' +
+      '<p><b>Company:</b> ' + item.company + '</p>' +
+      '<p><b>Difficulty:</b> ' + item.difficulty + '</p>' +
+      '<p><b>Date:</b> ' + item.date + '</p>' +
+      '<p><b>Created:</b> ' + parseDisplayDate(item.createdAt) + '</p>' +
+      '<div class="actions"><button class="secondary" onclick="editCodingQuestion(\'' + item.id + '\')">Edit</button><button class="danger" onclick="removeCodingQuestion(\'' + item.id + '\')">Delete</button></div>' +
+      '</div>';
+  }).join("");
+}
+
+function renderRequestColumn(targetId, items, activeMode){
+  const wrap = document.getElementById(targetId);
+  if(items.length === 0){
+    wrap.className = "empty";
+    wrap.innerHTML = activeMode ? "No active requests." : "No resolved requests.";
+    return;
+  }
+
+  wrap.className = "";
+  wrap.innerHTML = items.map((item)=>{
+    const date = item.createdAt ? new Date(item.createdAt).toLocaleString() : "-";
+    let actions = "";
+
+    if(activeMode){
+      actions = '<div class="actions">' +
+        '<button class="warning" onclick="markProgress(\'' + item.id + '\')">In Progress</button>' +
+        '<button class="success" onclick="markAdded(\'' + item.id + '\')">Mark as Added</button>' +
+        '<button class="danger" onclick="markRejected(\'' + item.id + '\')">Reject</button>' +
+        '</div>';
+    }
+
+    return '<div class="card">' +
+      '<h3>' + item.title + '</h3>' +
+      '<p><b>Category:</b> ' + item.category + '</p>' +
+      '<p><b>Requested By:</b> ' + item.user + '</p>' +
+      '<p><b>Reason:</b> ' + item.reason + '</p>' +
+      '<p><b>Status:</b> ' + item.status + '</p>' +
+      '<p><b>Submitted:</b> ' + date + '</p>' +
+      (item.updatedAt ? '<p><b>Last Updated:</b> ' + parseDisplayDate(item.updatedAt) + '</p>' : '') +
+      actions +
+      '</div>';
+  }).join("");
+}
+
+onSnapshot(collection(db, "daily_news"), (snapshot)=>{
+  const items = snapshot.docs.map((newsDoc)=>({ id: newsDoc.id, ...newsDoc.data() }))
+    .sort((a, b)=>String(b.date || "").localeCompare(String(a.date || "")) || toMillis(b.createdAt) - toMillis(a.createdAt))
+    .slice(0, 5);
+  newsCache = items;
+  renderNewsAdmin(items);
+});
+
+if(role !== "developer"){
+  onSnapshot(collection(db, "daily_coding_questions"), (snapshot)=>{
+    const items = snapshot.docs.map((codingDoc)=>({ id: codingDoc.id, ...codingDoc.data() }))
+      .sort((a, b)=>String(b.date || "").localeCompare(String(a.date || "")) || toMillis(b.createdAt) - toMillis(a.createdAt))
+      .slice(0, 7);
+    codingCache = items;
+    renderCodingAdmin(items);
+  });
+}
+
+onSnapshot(collection(db, "requests"), (snapshot)=>{
+  const items = snapshot.docs.map((requestDoc)=>({
+    id: requestDoc.id,
+    ...requestDoc.data(),
+    createdAt: requestDoc.data().createdAt?.toDate ? requestDoc.data().createdAt.toDate() : requestDoc.data().createdAt,
+    updatedAt: requestDoc.data().updatedAt?.toDate ? requestDoc.data().updatedAt.toDate() : requestDoc.data().updatedAt
+  })).sort((a, b)=>toMillis(b.createdAt) - toMillis(a.createdAt));
+
+  requestCache = items;
+  renderRequestColumn("activeRequests", items.filter((item)=>item.status === "pending" || item.status === "in_progress"), true);
+  renderRequestColumn("resolvedRequests", items.filter((item)=>item.status === "added" || item.status === "rejected"), false);
+});
+
+window.editNews = (id)=>{
+  const item = newsCache.find((entry)=>entry.id === id);
+  if(!item){
+    setStatusNote("newsStatus", "Selected news item was not found.", "error");
+    return;
+  }
+  editingNewsId = id;
+  document.getElementById("newsTitle").value = item.title || "";
+  document.getElementById("newsSource").value = item.source || "";
+  document.getElementById("newsDate").value = item.date || "";
+  document.getElementById("newsLink").value = item.link || "";
+  document.getElementById("newsImage").value = item.image || "";
+  document.getElementById("newsSummary").value = item.summary || "";
+  document.getElementById("newsActionBtn").innerText = "Update News";
+  setStatusNote("newsStatus", "Editing existing news item. Update fields and save.", "info");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.editCodingQuestion = (id)=>{
+  const item = codingCache.find((entry)=>entry.id === id);
+  if(!item){
+    setStatusNote("codingStatus", "Selected coding question was not found.", "error");
+    return;
+  }
+  editingCodingId = id;
+  document.getElementById("codingTitle").value = item.title || "";
+  document.getElementById("codingCompany").value = item.company || "";
+  document.getElementById("codingDifficulty").value = item.difficulty || "";
+  document.getElementById("codingDate").value = item.date || "";
+  document.getElementById("codingProblem").value = item.problem || "";
+  document.getElementById("codingActionBtn").innerText = "Update Daily Question";
+  setStatusNote("codingStatus", "Editing existing coding question. Update fields and save.", "info");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
+window.goLibrary = goLibrary;
+window.logout = logout;
+window.saveUpload = saveUpload;
+window.publishNews = publishNews;
+window.publishCodingQuestion = publishCodingQuestion;
+window.markProgress = async (id)=>updateRequestStatus(id, "in_progress");
+window.markAdded = async (id)=>{
+  const request = requestCache.find((item)=>item.id === id);
+  if(request){
+    await notifyAndResolve(request, "added");
+  }
+};
+window.markRejected = async (id)=>{
+  const request = requestCache.find((item)=>item.id === id);
+  if(request){
+    await notifyAndResolve(request, "rejected");
+  }
+};
+window.removeNews = async (id)=>{
+  if(!confirm("Delete this news item?")){
+    return;
+  }
+  await deleteDoc(doc(db, "daily_news", id));
+  if(editingNewsId === id){
+    resetNewsForm();
+  }
+  setStatusNote("newsStatus", "News item deleted.", "success");
+};
+window.removeCodingQuestion = async (id)=>{
+  if(!confirm("Delete this coding question?")){
+    return;
+  }
+  await deleteDoc(doc(db, "daily_coding_questions", id));
+  if(editingCodingId === id){
+    resetCodingForm();
+  }
+  setStatusNote("codingStatus", "Coding question deleted.", "success");
+};
+</script>
+
+</body>
+</html>

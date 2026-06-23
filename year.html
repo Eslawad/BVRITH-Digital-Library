@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Select Year</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#f2f4ff;
+text-align:center;
+}
+
+.container{
+margin-top:120px;
+}
+
+button{
+padding:12px 25px;
+margin:10px;
+font-size:16px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#3e8e41;
+}
+
+.back{
+background:red;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Select Year</h1>
+
+<button onclick="selectYear('2020')">2020</button>
+<button onclick="selectYear('2021')">2021</button>
+<button onclick="selectYear('2022')">2022</button>
+<button onclick="selectYear('2023')">2023</button>
+
+<br><br>
+
+<button class="back" onclick="goBack()">⬅ Back</button>
+
+</div>
+
+<script>
+
+function selectYear(year){
+
+localStorage.setItem("year",year)
+
+window.location.href="department.html"
+
+}
+
+function goBack(){
+
+window.location.href="index.html"
+
+}
+
+</script>
+
+</body>
+</html>
